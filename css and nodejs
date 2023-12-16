@@ -1,0 +1,165 @@
+HTML and CSS:
+
+home.ejs:
+
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Blog Home</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Blog Home</h1>
+    <ul>
+      <% posts.forEach(post => { %>
+        <li>
+          <a href="/post/<%= post._id %>"><%= post.title %></a>
+        </li>
+      <% }); %>
+    </ul>
+    <a href="/newpost">Create a New Post</a>
+  </div>
+</body>
+</html>
+post.ejs:
+
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title><%= post.title %></title>
+</head>
+<body>
+  <div class="container">
+    <h1><%= post.title %></h1>
+    <p><%= post.content %></p>
+    <a href="/">Back to Home</a>
+  </div>
+</body>
+</html>
+newpost.ejs:
+
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Create a New Post</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Create a New Post</h1>
+    <form action="/createpost" method="POST">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required>
+      <label for="content">Content:</label>
+      <textarea id="content" name="content" rows="4" required></textarea>
+      <button type="submit">Create Post</button>
+    </form>
+    <a href="/">Back to Home</a>
+  </div>
+</body>
+</html>
+styles.css:
+
+css
+Copy code
+body {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  width: 50%;
+  margin: auto;
+  padding: 20px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+Node.js with Express and MongoDB (app.js):
+
+javascript
+Copy code
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+const app = express();
+const port = 3000;
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/blog_website', { useNewUrlParser: true, useUnifiedTopology: true });
+const db = mongoose.connection;
+
+// Create post schema
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+});
+
+const Post = mongoose.model('Post', postSchema);
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
+
+// Routes
+app.get('/', async (req, res) => {
+  const posts = await Post.find();
+  res.render('home', { posts });
+});
+
+app.get('/post/:id', async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  res.render('post', { post });
+});
+
+app.get('/newpost', (req, res) => {
+  res.render('newpost');
+});
+
+app.post('/createpost', async (req, res) => {
+  const newPost = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  });
+
+  await newPost.save();
+  res.redirect('/');
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
