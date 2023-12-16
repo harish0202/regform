@@ -1,0 +1,96 @@
+HTML and CSS:
+
+index.ejs:
+
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Money Tracker</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Money Tracker</h1>
+    <form action="/addTransaction" method="POST">
+      <label for="description">Description:</label>
+      <input type="text" id="description" name="description" required>
+      <label for="amount">Amount:</label>
+      <input type="number" id="amount" name="amount" required>
+      <label for="type">Type:</label>
+      <select id="type" name="type" required>
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <button type="submit">Add Transaction</button>
+    </form>
+    <h2>Transactions</h2>
+    <ul>
+      <% transactions.forEach(transaction => { %>
+        <li class="<%= transaction.type %>">
+          <%= transaction.description %> - <%= transaction.amount %> (<%= transaction.type %>)
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+</body>
+</html>
+styles.css:
+
+css
+Copy code
+body {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  width: 50%;
+  margin: auto;
+  padding: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 8px;
+}
+
+input, select {
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+.income {
+  color: #008000;
+}
+
+.expense {
+  color: #ff0000;
+}
