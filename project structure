@@ -1,0 +1,9 @@
+- /blog-website
+  - /public
+    - /css
+      - styles.css
+  - /views
+    - home.ejs
+    - post.ejs
+    - newpost.ejs
+  - app.js
